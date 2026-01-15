@@ -182,7 +182,7 @@ def portfolio():
             return redirect(url_for('admin.portfolio'))
 
     # Список работ
-    works = Portfolio.query.order_by(Portfolio.uploaded_at.desc()).all()
+    works = Portfolio.query.order_by(Portfolio.created_at.desc()).all()
     return render_template('admin/portfolio.html', title='Управление портфолио', form=form, works=works)
 
 @bp.route('/portfolio/delete/<int:id>')
