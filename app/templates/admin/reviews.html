@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка -->
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">МОДЕРАЦИЯ ОТЗЫВОВ</h1>
+            <p class="text-muted mt-2">Просмотр и удаление комментариев</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-custom-outline rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+
+    <!-- Карточка с таблицей -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" data-aos="fade-up">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light border-bottom">
+                    <tr>
+                        <th class="py-3 ps-4 text-secondary small text-uppercase fw-bold" style="width: 25%;">Автор</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold" style="width: 15%;">Оценка</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold">Отзыв</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold" style="width: 15%;">Дата</th>
+                        <th class="py-3 pe-4 text-end text-secondary small text-uppercase fw-bold" style="width: 10%;">Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in reviews %}
+                    <tr>
+                        <!-- Автор -->
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 fw-bold text-dark" style="width: 40px; height: 40px; font-size: 14px;">
+                                    {{ review.author.full_name[0] }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ review.author.full_name }}</div>
+                                    <div class="small text-muted">{{ review.author.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Оценка (Звезды) -->
+                        <td>
+                            <div class="d-flex align-items-center text-warning">
+                                <span class="fw-bold text-dark me-2">{{ review.rating }}.0</span>
+                                <div class="small">
+                                    {% for _ in range(review.rating) %}<i class="bi bi-star-fill"></i>{% endfor %}
+                                    {% for _ in range(5 - review.rating) %}<i class="bi bi-star text-muted opacity-25"></i>{% endfor %}
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Текст отзыва -->
+                        <td>
+                            <p class="mb-0 text-secondary" style="max-width: 400px; line-height: 1.4;">
+                                {{ review.comment }}
+                            </p>
+                        </td>
+
+                        <!-- Дата -->
+                        <td>
+                            <span class="badge bg-light text-dark border fw-normal">
+                                {{ review.created_at.strftime('%d.%m.%Y') }}
+                            </span>
+                        </td>
+
+                        <!-- Кнопка удаления -->
+                        <td class="pe-4 text-end">
+                            <a href="{{ url_for('admin.delete_review', id=review.id) }}" 
+                               class="btn btn-light border rounded-circle text-danger d-flex align-items-center justify-content-center action-btn ms-auto"
+                               style="width: 40px; height: 40px;"
+                               onclick="return confirm('Вы уверены, что хотите удалить этот отзыв?')"
+                               title="Удалить отзыв">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-chat-square-text fs-1 d-block mb-3 opacity-50"></i>
+                                Отзывов пока нет
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Эффект увеличения кнопки при наведении */
+    .action-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: #fff;
+    }
+</style>
+{% endblock %}

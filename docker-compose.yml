@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Контейнер с базой данных
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: photostudio_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - db_data:/var/lib/mysql # Сохраняем базу данных, чтобы не стиралась при перезапуске
+    ports:
+      - "3307:3306" # Пробрасываем порт наружу (на 3307), если захотите подключиться через Workbench
+
+  # Контейнер с нашим приложением
+  web:
+    build: .
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      # Переопределяем настройки подключения для Docker
+      DB_HOST: db  # Имя сервиса базы данных из docker-compose
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: photostudio_db
+      SECRET_KEY: super-secret-key-docker
+      FLASK_APP: run.py
+    volumes:
+      # Пробрасываем папку загрузок, чтобы фото сохранялись на вашем компьютере, а не исчезали внутри контейнера
+      - ./app/static/uploads:/app/app/static/uploads
+
+volumes:
+  db_data:

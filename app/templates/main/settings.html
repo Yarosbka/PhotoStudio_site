@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Сайдбар -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center sticky-top" style="top: 150px; z-index: 1;">
+                <div class="mb-3">
+                    <!-- ЛОГИКА ОТОБРАЖЕНИЯ АВАТАРА -->
+                    {% if current_user.avatar_path %}
+                        <div class="rounded-circle overflow-hidden d-inline-block shadow-sm" style="width: 100px; height: 100px;">
+                            <img src="{{ url_for('static', filename='uploads/' + current_user.avatar_path) }}" 
+                                 alt="Avatar" class="w-100 h-100 object-fit-cover">
+                        </div>
+                    {% else %}
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                            <span class="display-4 fw-bold text-dark">{{ current_user.full_name[0] }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <h4 class="fw-bold text-uppercase">{{ current_user.full_name }}</h4>
+                <p class="text-muted small">{{ current_user.email }}</p>
+                <hr>
+                <div class="d-grid gap-2 text-start">
+                    <a href="{{ url_for('main.profile') }}" class="btn btn-white text-start px-3">📦 Мои заказы</a>
+                    <a href="{{ url_for('main.settings') }}" class="btn btn-light rounded-pill text-start px-3 active fw-bold">⚙️ Настройки</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-white text-start text-danger px-3">🚪 Выйти</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент: Форма настроек -->
+        <div class="col-md-8">
+            <h2 class="brand-font mb-4">НАСТРОЙКИ ПРОФИЛЯ</h2>
+            
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <!-- Важно: enctype для загрузки -->
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Загрузка фото -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Фото профиля</label>
+                        <div class="d-flex align-items-center gap-3">
+                            {% if current_user.avatar_path %}
+                                <img src="{{ url_for('static', filename='uploads/' + current_user.avatar_path) }}" 
+                                     class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% endif %}
+                            {{ form.avatar(class="form-control rounded-pill px-3 bg-light border-0 py-2") }}
+                        </div>
+                        {% for error in form.avatar.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Ваше имя</label>
+                        {{ form.full_name(class="form-control rounded-pill px-3 bg-light border-0 py-2") }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Email</label>
+                        {{ form.email(class="form-control rounded-pill px-3 bg-light border-0 py-2") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Телефон</label>
+                        {{ form.phone(class="form-control rounded-pill px-3 bg-light border-0 py-2") }}
+                    </div>
+                    
+                    <div class="text-end">
+                        {{ form.submit(class="btn-custom-black px-5") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

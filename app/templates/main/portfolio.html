@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Заголовок -->
+    <div class="text-center mb-5" data-aos="fade-in">
+        <h1 class="brand-font display-4">НАШИ РАБОТЫ</h1>
+        <p class="text-muted">Вдохновение для вашей съемки</p>
+    </div>
+
+    <!-- Кнопки фильтра -->
+    <div class="d-flex justify-content-center mb-5 gap-3 flex-wrap">
+        <button class="btn btn-custom-black filter-btn rounded-pill px-4" data-filter="all">Все</button>
+        {% for cat in categories %}
+        <button class="btn btn-custom-outline filter-btn rounded-pill px-4" data-filter="cat-{{ cat.id }}">{{ cat.name }}</button>
+        {% endfor %}
+    </div>
+
+    <!-- Галерея -->
+    <div class="row g-4" id="portfolio-grid">
+        {% for work in works %}
+        <!-- Добавляем класс категории к каждому элементу -->
+        <div class="col-md-6 col-lg-4 portfolio-item cat-{{ work.category_id }}" data-aos="fade-up">
+            <div class="card border-0 rounded-4 shadow-sm overflow-hidden h-100 position-relative group-hover-effect">
+                <!-- Картинка -->
+                <img src="{{ url_for('static', filename='uploads/' + work.image_path) }}" 
+                     class="card-img-top w-100 h-100" 
+                     alt="{{ work.title }}"
+                     style="height: 350px; object-fit: cover; cursor: pointer; transition: transform 0.5s ease;"
+                     onmouseover="this.style.transform='scale(1.05)'"
+                     onmouseout="this.style.transform='scale(1)'"
+                     data-bs-toggle="modal" data-bs-target="#modal-{{ work.id }}">
+                
+                <!-- Градиент и текст поверх картинки (появляется при наведении) -->
+                <div class="position-absolute bottom-0 start-0 w-100 p-4" 
+                     style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); pointer-events: none;">
+                    <h5 class="text-white brand-font mb-0 text-uppercase">{{ work.title }}</h5>
+                    <p class="text-white-50 small mb-0">{{ work.category.name }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для просмотра фото -->
+        <div class="modal fade" id="modal-{{ work.id }}" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0 bg-transparent">
+                    <div class="modal-body p-0 position-relative">
+                         <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-dark p-2 rounded-circle" data-bs-dismiss="modal" style="opacity: 0.8;"></button>
+                        <img src="{{ url_for('static', filename='uploads/' + work.image_path) }}" class="w-100 rounded-4 shadow-lg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-light rounded-5">
+                <h3 class="brand-font text-muted mb-3">ПОРТФОЛИО ПУСТО</h3>
+                <p class="text-muted">Загрузите работы через админ-панель, чтобы они появились здесь.</p>
+                {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin.portfolio') }}" class="btn btn-custom-black mt-3">Перейти к загрузке</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Скрипт фильтрации (Обновленный под новые классы кнопок) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.filter-btn');
+        const items = document.querySelectorAll('.portfolio-item');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 1. Сбрасываем стили у всех кнопок (делаем их outline)
+                buttons.forEach(b => {
+                    b.classList.remove('btn-custom-black');
+                    b.classList.add('btn-custom-outline');
+                });
+                
+                // 2. Красим нажатую кнопку в черный (active)
+                btn.classList.remove('btn-custom-outline');
+                btn.classList.add('btn-custom-black');
+
+                const filter = btn.getAttribute('data-filter');
+
+                // 3. Фильтрация элементов
+                items.forEach(item => {
+                    if (filter === 'all' || item.classList.contains(filter)) {
+                        // Показываем
+                        item.style.display = 'block';
+                        // Небольшая анимация появления
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        }, 50);
+                    } else {
+                        // Скрываем
+                        item.style.display = 'none';
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.9)';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

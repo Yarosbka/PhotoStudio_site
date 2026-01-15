@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <!-- Сдвиг текста вправо (offset-lg-1) -->
+            <div class="col-lg-5 offset-lg-1 ps-lg-5 py-5 z-2">
+                <h1 class="hero-title" data-aos="fade-up">ФОТОГРАФИЯ,<br>КОТОРАЯ ГОВОРИТ</h1>
+                <p class="text-secondary mb-4 lead" style="max-width: 500px;" data-aos="fade-up" data-aos-delay="100">
+                    Профессиональная студия с топовым оборудованием. Мы поможем сохранить ваши лучшие моменты.
+                </p>
+                <a href="{{ url_for('main.catalog') }}" class="btn-custom-black" data-aos="fade-up" data-aos-delay="200">
+                    Забронировать
+                </a>
+                
+                <div class="row mt-5" data-aos="fade-up" data-aos-delay="300">
+                    <div class="col-4 hero-stats">
+                        <h3 class="mb-0">200+</h3>
+                        <p class="text-secondary small">Клиентов</p>
+                    </div>
+                    <div class="col-4 hero-stats">
+                        <h3 class="mb-0">2k+</h3>
+                        <p class="text-secondary small">Снимков</p>
+                    </div>
+                    <div class="col-4 hero-stats">
+                        <h3 class="mb-0">30+</h3>
+                        <p class="text-secondary small">Наград</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Картинка справа -->
+            <div class="col-lg-6 d-flex justify-content-center position-relative" data-aos="zoom-in" data-aos-duration="1000">
+                <i class="bi bi-star-fill star-decor display-4" style="top: 10%; right: 10%;"></i>
+                <i class="bi bi-star-fill star-decor fs-3" style="top: 40%; left: 5%;"></i>
+                <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=800&auto=format&fit=crop" 
+                     class="img-fluid position-relative z-1 rounded-5" 
+                     style="max-height: 600px; object-fit: cover;" 
+                     alt="Photographer">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MARQUEE (Бегущая строка) -->
+<div class="marquee-container">
+    <div class="marquee-content">
+        <span class="brand-item">CANON</span>
+        <span class="brand-item">NIKON</span>
+        <span class="brand-item">PROFOTO</span>
+        <span class="brand-item">SONY</span>
+        <span class="brand-item">FUJIFILM</span>
+        <span class="brand-item">GODOX</span>
+        <span class="brand-item">CANON</span>
+        <span class="brand-item">NIKON</span>
+        <span class="brand-item">PROFOTO</span>
+    </div>
+</div>
+
+<!-- ПОПУЛЯРНЫЕ УСЛУГИ -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <h2 class="text-center mb-5 brand-font display-4" data-aos="fade-up">ПОПУЛЯРНЫЕ УСЛУГИ</h2>
+        
+        <div class="row g-4">
+            {% for service in services[:4] %}
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <a href="{{ url_for('main.service_detail', id=service.id) }}" class="text-decoration-none text-dark h-100 d-block">
+                    <div class="product-card h-100 d-flex flex-column">
+                        <div class="card-img-wrapper" style="height: 300px; overflow: hidden; border-radius: 20px;">
+                            {% if service.image_path %}
+                                <!-- Если фото есть, показываем его -->
+                                <img src="{{ url_for('static', filename='uploads/' + service.image_path) }}" 
+                                     class="w-100 h-100 object-fit-cover" 
+                                     alt="{{ service.name }}">
+                            {% else %}
+                                <!-- Если фото нет, показываем иконку камеры -->
+                                <div style="height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-camera fs-1 text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h5 class="fw-bold mb-1">{{ service.name }}</h5>
+                        <div class="d-flex align-items-center mb-1 rating-stars">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <span class="text-muted small ms-2">5.0/5</span>
+                        </div>
+                        <div class="price-tag mt-auto">{{ service.price|int }} ₽</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('main.catalog') }}" class="btn-custom-outline px-5">Смотреть все</a>
+        </div>
+    </div>
+</section>
+
+<!-- ОТЗЫВЫ -->
+<section class="py-5 mb-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="brand-font display-5">СЧАСТЛИВЫЕ<br>КЛИЕНТЫ</h2>
+        </div>
+        
+        <div class="row g-4">
+            {% for review in reviews[:3] %}
+            <div class="col-md-4" data-aos="fade-left" data-aos-delay="{{ loop.index * 150 }}">
+                <div class="review-card blur-bg h-100">
+                    <!-- Звезды -->
+                    <div class="mb-3 rating-stars text-warning">
+                        {% for _ in range(review.rating) %}<i class="bi bi-star-fill"></i>{% endfor %}
+                    </div>
+                    
+                    <!-- Автор + Фото -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <!-- Логика фото -->
+                        {% if review.author.avatar_path %}
+                            <img src="{{ url_for('static', filename='uploads/' + review.author.avatar_path) }}" 
+                                 class="rounded-circle border" 
+                                 style="width: 45px; height: 45px; object-fit: cover;"
+                                 alt="{{ review.author.full_name }}">
+                        {% else %}
+                            <!-- Заглушка с буквой -->
+                            <div class="rounded-circle bg-black text-white d-flex align-items-center justify-content-center fw-bold" 
+                                 style="width: 45px; height: 45px; font-size: 18px;">
+                                {{ review.author.full_name[0] }}
+                            </div>
+                        {% endif %}
+
+                        <h5 class="fw-bold d-flex align-items-center mb-0 text-uppercase">
+                            {{ review.author.full_name }} 
+                            <i class="bi bi-check-circle-fill text-success ms-2 fs-6" title="Подтвержденный клиент"></i>
+                        </h5>
+                    </div>
+
+                    <!-- Текст -->
+                    <p class="text-muted opacity-75">"{{ review.comment }}"</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

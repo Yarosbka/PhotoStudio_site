@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="card-header bg-black text-white p-4">
+                <h3 class="brand-font mb-0 text-white">БРОНИРОВАНИЕ</h3>
+                <p class="mb-0 text-white-50">{{ service.name }}</p>
+            </div>
+            <div class="card-body p-5">
+                <!-- Важно: novalidate отключает браузерные проверки, чтобы работали наши -->
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Дата съемки</label>
+                            {% if form.date.errors %}
+                                {{ form.date(class="form-control rounded-pill px-3 py-2 bg-light border border-danger text-danger is-invalid", type="date") }}
+                            {% else %}
+                                {{ form.date(class="form-control rounded-pill px-3 py-2 bg-light border-0", type="date") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Время начала</label>
+                            {% if form.time.errors %}
+                                {{ form.time(class="form-control rounded-pill px-3 py-2 bg-light border border-danger text-danger is-invalid", type="time") }}
+                            {% else %}
+                                {{ form.time(class="form-control rounded-pill px-3 py-2 bg-light border-0", type="time") }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-light rounded-4 d-flex align-items-center gap-3">
+                        <i class="bi bi-info-circle fs-4"></i>
+                        <p class="mb-0 small">Длительность съемки: <strong>{{ service.duration }} мин</strong>. Стоимость: <strong>{{ service.price }} ₽</strong></p>
+                    </div>
+
+                    <div class="mt-4">
+                        {{ form.submit(class="btn-custom-black w-100", value="Подтвердить бронирование") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-5 p-4">
+            <div class="card-body">
+                <h2 class="brand-font text-center mb-4">РЕГИСТРАЦИЯ</h2>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.full_name.label(class="form-label fw-bold") }}
+                        {{ form.full_name(class="form-control rounded-pill px-3 bg-light border-0") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label fw-bold") }}
+                        {{ form.email(class="form-control rounded-pill px-3 bg-light border-0") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.phone.label(class="form-label fw-bold") }}
+                        {{ form.phone(class="form-control rounded-pill px-3 bg-light border-0") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label fw-bold") }}
+                        {{ form.password(class="form-control rounded-pill px-3 bg-light border-0") }}
+                    </div>
+                    <div class="mb-4">
+                        {{ form.confirm_password.label(class="form-label fw-bold") }}
+                        {{ form.confirm_password(class="form-control rounded-pill px-3 bg-light border-0") }}
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn-custom-black w-100") }}
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('auth.login') }}" class="text-secondary">Уже есть аккаунт? Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

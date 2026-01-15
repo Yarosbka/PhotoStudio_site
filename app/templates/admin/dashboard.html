@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка -->
+    <div class="d-flex justify-content-between align-items-end mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">ПАНЕЛЬ УПРАВЛЕНИЯ</h1>
+            <p class="text-muted mt-2">Добро пожаловать, Администратор</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <span class="badge bg-black rounded-pill px-3 py-2">v1.0</span>
+        </div>
+    </div>
+    
+    <!-- Сетка карточек -->
+    <div class="row g-4">
+        
+        <!-- 1. Календарь -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-calendar-week display-3"></i>
+                </div>
+                <h4 class="brand-font">КАЛЕНДАРЬ</h4>
+                <p class="text-muted small mb-4">Визуализация занятости студии</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.calendar') }}" class="btn btn-custom-outline w-100 stretched-link">Открыть</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Заказы -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-box-seam display-3"></i>
+                </div>
+                <h4 class="brand-font">ЗАКАЗЫ</h4>
+                <p class="text-muted small mb-4">Управление бронированиями</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.orders') }}" class="btn btn-custom-outline w-100 stretched-link">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Услуги -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-camera display-3"></i>
+                </div>
+                <h4 class="brand-font">УСЛУГИ</h4>
+                <p class="text-muted small mb-4">Редактирование цен и описаний</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.services') }}" class="btn btn-custom-outline w-100 stretched-link">Редактировать</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Портфолио -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-images display-3"></i>
+                </div>
+                <h4 class="brand-font">ПОРТФОЛИО</h4>
+                <p class="text-muted small mb-4">Загрузка и удаление фото</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.portfolio') }}" class="btn btn-custom-outline w-100 stretched-link">Управление</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Отзывы (Новый блок) -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-chat-quote display-3"></i>
+                </div>
+                <h4 class="brand-font">ОТЗЫВЫ</h4>
+                <p class="text-muted small mb-4">Модерация комментариев</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.reviews') }}" class="btn btn-custom-outline w-100 stretched-link">Модерация</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Категории (Дополнительно, для полноты) -->
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center hover-scale">
+                <div class="mb-4 text-dark opacity-75">
+                    <i class="bi bi-tags display-3"></i>
+                </div>
+                <h4 class="brand-font">КАТЕГОРИИ</h4>
+                <p class="text-muted small mb-4">Настройка разделов сайта</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('admin.categories') }}" class="btn btn-custom-outline w-100 stretched-link">Настроить</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Небольшой стиль для анимации карточек -->
+<style>
+    .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+</style>
+{% endblock %}

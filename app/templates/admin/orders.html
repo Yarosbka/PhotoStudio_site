@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка -->
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">ВСЕ ЗАКАЗЫ</h1>
+            <p class="text-muted mt-2">Управление бронированиями и статусами</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-custom-outline rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+
+    <!-- Карточка с таблицей -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" data-aos="fade-up">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="bg-light border-bottom">
+                    <tr>
+                        <th class="py-3 ps-4 text-secondary small text-uppercase fw-bold" style="width: 5%;">ID</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold" style="width: 25%;">Клиент</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold">Дата / Услуга</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold">Сумма</th>
+                        <th class="py-3 text-secondary small text-uppercase fw-bold">Статус</th>
+                        <th class="py-3 pe-4 text-end text-secondary small text-uppercase fw-bold">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-muted">#{{ order.id }}</td>
+                        
+                        <!-- Клиент -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 fw-bold text-dark" style="width: 40px; height: 40px; font-size: 14px;">
+                                    {{ order.client.full_name[0] }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ order.client.full_name }}</div>
+                                    <div class="small text-muted">{{ order.client.phone }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Дата и Услуга -->
+                        <td>
+                            <div class="fw-bold text-dark">
+                                {{ order.booking_datetime.strftime('%d.%m.%Y') }} 
+                                <span class="text-muted fw-normal mx-1">в</span> 
+                                {{ order.booking_datetime.strftime('%H:%M') }}
+                            </div>
+                            <div class="small text-muted text-truncate" style="max-width: 250px;">
+                                {% for item in order.items %}
+                                    {{ item.service.name }}
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <!-- Сумма -->
+                        <td>
+                            <span class="fw-bold">{{ order.total_price|int }} ₽</span>
+                        </td>
+
+                        <!-- Статус (Бейджи) -->
+                        <td>
+                            {% if order.status == 'pending' %}
+                                <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2">
+                                    <i class="bi bi-clock me-1"></i> Ожидает
+                                </span>
+                            {% elif order.status == 'confirmed' %}
+                                <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success px-3 py-2">
+                                    <i class="bi bi-check-circle me-1"></i> Подтвержден
+                                </span>
+                            {% elif order.status == 'cancelled' %}
+                                <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2">
+                                    <i class="bi bi-x-circle me-1"></i> Отменен
+                                </span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary border px-3 py-2">
+                                    {{ order.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Действия (Кнопки) -->
+                        <!-- Действия (Кнопки) -->
+                        <!-- Действия (Кнопки) -->
+                        <td class="pe-4 text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                
+                                <!-- Кнопка Подтвердить / Восстановить -->
+                                <!-- ПОКАЗЫВАЕМ ВСЕГДА, ЕСЛИ ЗАКАЗ НЕ ПОДТВЕРЖДЕН (Т.е. можно восстановить отмененный) -->
+                                {% if order.status != 'confirmed' %}
+                                <a href="{{ url_for('admin.change_order_status', id=order.id, new_status='confirmed') }}" 
+                                   class="btn btn-light border rounded-circle text-success d-flex align-items-center justify-content-center action-btn"
+                                   style="width: 40px; height: 40px;"
+                                   title="Подтвердить / Восстановить">
+                                    <i class="bi bi-check-lg fs-5"></i>
+                                </a>
+                                {% endif %}
+                                
+                                <!-- Кнопка Отменить -->
+                                <!-- Показываем, если заказ НЕ отменен -->
+                                {% if order.status != 'cancelled' %}
+                                <a href="{{ url_for('admin.change_order_status', id=order.id, new_status='cancelled') }}" 
+                                   class="btn btn-light border rounded-circle text-warning d-flex align-items-center justify-content-center action-btn"
+                                   style="width: 40px; height: 40px;"
+                                   onclick="return confirm('Отменить заказ?')"
+                                   title="Отменить">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                                {% endif %}
+
+                                <!-- Кнопка Удалить навсегда (Всегда видна) -->
+                                <a href="{{ url_for('admin.delete_order', id=order.id) }}" 
+                                   class="btn btn-light border rounded-circle text-danger d-flex align-items-center justify-content-center action-btn"
+                                   style="width: 40px; height: 40px;"
+                                   onclick="return confirm('ВНИМАНИЕ: Заказ будет удален из базы навсегда! Продолжить?')"
+                                   title="Удалить полностью">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
+                                Заказов пока нет
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ховер-эффект для кнопок действий */
+    .action-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

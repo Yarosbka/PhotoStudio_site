@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка -->
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">КАЛЕНДАРЬ ЗАНЯТОСТИ</h1>
+            <p class="text-muted mt-2">Расписание съемок и свободных слотов</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-custom-outline rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+
+    <!-- Контейнер календаря -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" data-aos="fade-up">
+        <div class="card-body p-4">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключаем FullCalendar -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      locale: 'ru',
+      firstDay: 1, // Понедельник первый
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      buttonText: {
+        today: 'Сегодня',
+        month: 'Месяц',
+        week: 'Неделя',
+        day: 'День'
+      },
+      events: "{{ url_for('admin.get_events') }}",
+      eventTimeFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        meridiem: false
+      },
+      height: 'auto', // Автовысота
+      contentHeight: 700,
+      slotMinTime: "08:00:00",
+      slotMaxTime: "23:00:00",
+      allDaySlot: false,
+      nowIndicator: true, // Красная линия текущего времени
+      
+      // Стилизация событий при рендере
+      eventDidMount: function(info) {
+        // Добавляем тултип (всплывашку) при наведении
+        info.el.title = info.event.title;
+      }
+    });
+    
+    calendar.render();
+  });
+</script>
+
+<!-- Стилизация FullCalendar под черно-белый дизайн -->
+<style>
+    /* 1. Заголовок календаря */
+    .fc .fc-toolbar-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 1.75rem;
+    }
+
+    /* 2. Кнопки (Month, Week, Day, Next, Prev) */
+    .fc .fc-button {
+        background-color: transparent;
+        border: 1px solid rgba(0,0,0,0.1);
+        color: #000;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        text-transform: capitalize;
+        border-radius: 50px; /* Скругление */
+        padding: 8px 20px;
+        box-shadow: none !important;
+        transition: all 0.3s ease;
+    }
+
+    /* Активная кнопка и ховер */
+    .fc .fc-button:hover, 
+    .fc .fc-button-primary:not(:disabled).fc-button-active, 
+    .fc .fc-button-primary:not(:disabled):active {
+        background-color: #000 !important;
+        border-color: #000 !important;
+        color: #fff !important;
+    }
+    
+    /* Кнопка "Сегодня" */
+    .fc .fc-today-button {
+        text-transform: uppercase;
+        font-weight: 700;
+        opacity: 0.7;
+    }
+
+    /* 3. Сетка календаря */
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: #f0f0f0; /* Светлые границы */
+    }
+    
+    /* Заголовки дней (ПН 12.01) */
+    .fc-col-header-cell-cushion {
+        color: #000;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 10px 0;
+    }
+
+    /* Текущий день (фон колонки) */
+    .fc .fc-day-today {
+        background-color: rgba(0,0,0,0.02) !important; /* Очень легкий серый вместо желтого */
+    }
+
+    /* 4. События (Плашки заказов) */
+    .fc-event {
+        border: none;
+        border-radius: 6px;
+        padding: 2px 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    
+    /* Индикатор текущего времени */
+    .fc .fc-now-indicator {
+        border-color: #FF3333;
+    }
+    
+    /* Убираем синюю обводку фокуса */
+    .fc-button:focus {
+        box-shadow: none !important;
+    }
+</style>
+{% endblock %}

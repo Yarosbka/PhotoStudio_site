@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка страницы -->
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">ПОРТФОЛИО СТУДИИ</h1>
+            <p class="text-muted mt-2">Добавляйте лучшие работы на сайт</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-custom-outline rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+
+    <div class="row g-5">
+        <!-- Левая колонка: Форма загрузки (Прилипающая) -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;" data-aos="fade-right">
+                <h4 class="brand-font mb-4">ДОБАВИТЬ ФОТО</h4>
+                
+                <!-- Важно: enctype для загрузки файлов -->
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Название</label>
+                        {{ form.title(class="form-control rounded-pill bg-light border-0 px-3 py-2") }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Категория</label>
+                        {{ form.category_id(class="form-select rounded-pill bg-light border-0 px-3 py-2") }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Описание</label>
+                        <!-- rows=3 для текстового поля -->
+                        {{ form.description(class="form-control rounded-4 bg-light border-0 px-3 py-2", rows=3) }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Файл</label>
+                        {{ form.image(class="form-control rounded-pill bg-light border-0 px-3 py-2") }}
+                        {% for error in form.image.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    {{ form.submit(class="btn-custom-black w-100") }}
+                </form>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Сетка загруженных фото -->
+        <div class="col-lg-8">
+            <div class="row g-4">
+                {% for work in works %}
+                <div class="col-md-6" data-aos="fade-up">
+                    <div class="card border-0 rounded-4 shadow-sm h-100 overflow-hidden group-hover-effect">
+                        <!-- Изображение -->
+                        <div class="position-relative">
+                            <img src="{{ url_for('static', filename='uploads/' + work.image_path) }}" 
+                                 class="card-img-top" 
+                                 alt="{{ work.title }}" 
+                                 style="height: 250px; object-fit: cover;">
+                            
+                            <!-- Бейдж категории поверх фото -->
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <span class="badge bg-white text-dark shadow-sm rounded-pill px-3 py-2">
+                                    {{ work.category.name }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Информация -->
+                        <div class="card-body d-flex justify-content-between align-items-center p-3">
+                            <div style="overflow: hidden;">
+                                <h5 class="fw-bold mb-1 text-truncate text-uppercase">{{ work.title }}</h5>
+                                <p class="text-muted small mb-0 text-truncate">{{ work.description or 'Без описания' }}</p>
+                            </div>
+                            
+                            <!-- Кнопка удаления -->
+                            <a href="{{ url_for('admin.delete_portfolio', id=work.id) }}" 
+                               class="btn btn-outline-danger rounded-circle p-0 d-flex align-items-center justify-content-center flex-shrink-0 ms-3" 
+                               style="width: 40px; height: 40px;"
+                               onclick="return confirm('Вы уверены, что хотите удалить это фото?')"
+                               title="Удалить">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="p-5 bg-light rounded-5 border border-light">
+                        <i class="bi bi-images fs-1 text-muted mb-3 d-block"></i>
+                        <h4 class="brand-font text-muted">ГАЛЕРЕЯ ПУСТА</h4>
+                        <p class="text-muted">Используйте форму слева, чтобы добавить первые работы.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

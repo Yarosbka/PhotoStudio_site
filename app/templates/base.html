@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }} - PHOTO.CO</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Иконки -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Анимации -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Наши стили -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    
+
+
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+      <div class="container">
+        <!-- Логотип -->
+        <a class="navbar-brand brand-font" href="{{ url_for('main.index') }}">PHOTO.CO</a>
+        
+        <!-- Кнопка мобильного меню -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Меню -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.catalog') }}">Услуги</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.portfolio') }}">Портфолио</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.reviews') }}">Отзывы</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contact') }}">Контакты</a></li>
+          </ul>
+          
+          <!-- Правая часть: Кнопки входа -->
+          <!-- ДОБАВЛЕН КЛАСС ms-lg-auto -->
+          <div class="d-flex align-items-center gap-3 ms-lg-auto w-lg-auto w-100 mt-3 mt-lg-0">
+              <div class="d-flex gap-2 w-100 justify-content-end align-items-center">
+                  {% if current_user.is_authenticated %}
+                      <!-- Кнопка Админки (Если админ) -->
+                      {% if current_user.role == 'admin' %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-danger fw-bold rounded-pill px-3">
+                            Админка
+                        </a>
+                      {% endif %}
+
+                      <!-- Кнопка Профиль (Черная) -->
+                      <a href="{{ url_for('main.profile') }}" class="btn btn-dark rounded-pill px-4 fw-bold d-flex align-items-center">
+                          <i class="bi bi-person-circle me-2"></i> Профиль
+                      </a>
+
+                      <!-- Кнопка Выйти (Контурная) -->
+                      <a href="{{ url_for('auth.logout') }}" class="btn btn-dark rounded-pill px-4 fw-bold d-flex align-items-center">
+                          <i class="bi bi-box-arrow-right me-2"></i> Выйти
+                      </a>
+                  {% else %}
+                      <!-- Кнопки для гостей -->
+                      <a href="{{ url_for('auth.login') }}" class="btn btn-dark rounded-pill px-4 fw-bold">Войти</a>
+                      <a href="{{ url_for('auth.register') }}" class="btn btn-dark rounded-pill px-4 fw-bold">Регистрация</a>
+                  {% endif %}
+              </div>
+          </div>
+        </div> <!-- Конец collapse -->
+      </div> <!-- Конец container -->
+    </nav> <!-- Конец nav -->
+
+    <!-- Сообщения (Flash) - НОВЫЙ БЛОК -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <!-- Превращаем 'danger' и 'error' в один класс для CSS -->
+              <div class="custom-alert {{ category }}">
+                  <span class="alert-message">{{ message }}</span>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Основной контент -->
+    {% block content %}{% endblock %}
+
+    <!-- Футер -->
+    <footer class="mt-5 pt-5 pb-3" style="background-color: var(--gray-light);">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h2 class="brand-font mb-4">PHOTO.CO</h2>
+                    <p class="text-muted mb-4">
+                        Мы создаем фотографии, которые подчеркивают ваш стиль. От свадеб до предметной съемки.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-light rounded-circle border"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="btn btn-dark rounded-circle"><i class="bi bi-telegram"></i></a>
+                        <a href="#" class="btn btn-light rounded-circle border"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3 text-uppercase small">Компания</h6>
+                    <ul class="list-unstyled text-muted d-flex flex-column gap-3">
+                        <li><a href="#">О нас</a></li>
+                        <li><a href="#">Карьера</a></li>
+                        <li><a href="{{ url_for('main.portfolio') }}">Работы</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3 text-uppercase small">Помощь</h6>
+                    <ul class="list-unstyled text-muted d-flex flex-column gap-3">
+                        <li><a href="#">Поддержка</a></li>
+                        <li><a href="#">Условия</a></li>
+                        <li><a href="#">Конфиденциальность</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3 text-uppercase small">Клиентам</h6>
+                    <ul class="list-unstyled text-muted d-flex flex-column gap-3">
+                        <li><a href="{{ url_for('main.profile') }}">Аккаунт</a></li>
+                        <li><a href="#">Мои бронирования</a></li>
+                        <li><a href="#">Оплата</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-5 opacity-10">
+            <div class="text-center text-muted small">
+                Photo.co © 2000-2024, Все права защищены
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 50 });
+    </script>
+    {% block scripts %}{% endblock %}
+    <!-- Скрипт для закрытия уведомлений -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Находим все кнопки закрытия внутри наших уведомлений
+            const closeButtons = document.querySelectorAll('.custom-alert .btn-close');
+            
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Находим родительскую карточку
+                    const alertBox = this.closest('.custom-alert');
+                    
+                    if (alertBox) {
+                        // 1. Делаем прозрачным и сдвигаем вверх (анимация)
+                        alertBox.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+                        alertBox.style.opacity = "0";
+                        alertBox.style.transform = "translateY(-20px)";
+                        
+                        // 2. Полностью удаляем из HTML через 0.3 секунды
+                        setTimeout(() => {
+                            alertBox.remove();
+                        }, 300);
+                    }
+                });
+            });
+
+            // ОПЦИОНАЛЬНО: Автоматическое скрытие через 5 секунд
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.custom-alert');
+                alerts.forEach(alertBox => {
+                    alertBox.style.transition = "opacity 0.5s ease";
+                    alertBox.style.opacity = "0";
+                    setTimeout(() => alertBox.remove(), 500);
+                });
+            }, 5000); // 5000 мс = 5 секунд
+        });
+    </script>
+  </body>
+</html>

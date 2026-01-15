@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Шапка -->
+    <div class="d-flex justify-content-between align-items-center mb-5" data-aos="fade-down">
+        <div>
+            <h1 class="brand-font display-4 mb-0">УПРАВЛЕНИЕ КАТЕГОРИЯМИ</h1>
+            <p class="text-muted mt-2">Создание и удаление разделов меню</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-custom-outline rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Назад
+        </a>
+    </div>
+
+    <div class="row g-5">
+        <!-- Левая колонка: Форма добавления -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;" data-aos="fade-right">
+                <h4 class="brand-font mb-4">ДОБАВИТЬ НОВУЮ</h4>
+                
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-uppercase">Название категории</label>
+                        {{ form.name(class="form-control rounded-pill bg-light border-0 px-3 py-2", placeholder="Например: Love Story") }}
+                        {% for error in form.name.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    {{ form.submit(class="btn-custom-black w-100") }}
+                </form>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Список категорий -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" data-aos="fade-up">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="bg-light border-bottom">
+                            <tr>
+                                <th class="py-3 ps-4 text-secondary small text-uppercase fw-bold" style="width: 10%;">ID</th>
+                                <th class="py-3 text-secondary small text-uppercase fw-bold">Название</th>
+                                <th class="py-3 pe-4 text-end text-secondary small text-uppercase fw-bold" style="width: 20%;">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#{{ category.id }}</td>
+                                
+                                <td>
+                                    <span class="fw-bold text-dark fs-5">{{ category.name }}</span>
+                                </td>
+
+                                <td class="pe-4 text-end">
+                                    <!-- Кнопка удаления -->
+                                    <a href="{{ url_for('admin.delete_category', id=category.id) }}" 
+                                       class="btn btn-light border rounded-circle text-danger d-flex align-items-center justify-content-center action-btn ms-auto"
+                                       style="width: 40px; height: 40px;"
+                                       onclick="return confirm('Вы уверены? Удаление категории может повлиять на услуги.')"
+                                       title="Удалить категорию">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-tags fs-1 d-block mb-3 opacity-50"></i>
+                                        Категорий пока нет
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Эффект при наведении на кнопку удаления */
+    .action-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: #fff;
+    }
+</style>
+{% endblock %}

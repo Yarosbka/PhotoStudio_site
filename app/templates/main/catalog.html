@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5" data-aos="fade-in">
+        <h1 class="brand-font display-4">КАТАЛОГ УСЛУГ</h1>
+        <p class="text-muted">Выберите идеальный пакет для вашей задачи</p>
+    </div>
+
+        
+    <!-- Фильтр категорий -->
+    <div class="d-flex justify-content-center mb-5 gap-3 flex-wrap">
+        <!-- Кнопка "Все" -->
+        <a href="{{ url_for('main.catalog') }}" 
+           class="text-decoration-none {% if not active_category %}btn-custom-black{% else %}btn-custom-outline{% endif %}">
+           Все
+        </a>
+        
+        <!-- Остальные категории -->
+        {% for cat in categories %}
+        <a href="{{ url_for('main.catalog', category_id=cat.id) }}" 
+           class="text-decoration-none {% if active_category and active_category.id == cat.id %}btn-custom-black{% else %}btn-custom-outline{% endif %}">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+  
+
+    <div class="row g-4">
+        {% for service in services %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+            <!-- Ссылка на всю карточку -->
+            <a href="{{ url_for('main.service_detail', id=service.id) }}" class="text-decoration-none text-dark h-100 d-block">
+                <!-- Flex container для карточки -->
+                <div class="product-card p-3 border rounded-4 bg-white h-100 d-flex flex-column">
+                    <div class="card-img-wrapper" style="height: 250px; flex-shrink: 0; overflow: hidden;">
+                        {% if service.image_path %}
+                            <img src="{{ url_for('static', filename='uploads/' + service.image_path) }}" 
+                                 class="w-100 h-100 object-fit-cover" 
+                                 alt="{{ service.name }}">
+                        {% else %}
+                            <!-- Заглушка, если фото не загружено -->
+                            <div style="height: 100%; background: #eee; display: flex; align-items: center; justify-content: center;">
+                                <span class="text-muted fw-bold">НЕТ ФОТО</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-start mt-3">
+                        <div class="me-2">
+                            <h4 class="fw-bold mb-1 text-uppercase">{{ service.name }}</h4>
+                            <p class="text-muted small mb-0">{{ service.category.name }}</p>
+                        </div>
+                        <!-- Цена без переноса -->
+                        <div class="price-tag text-nowrap">{{ service.price|int }} ₽</div>
+                    </div>
+                    
+                    <p class="text-secondary small mt-2 mb-3">{{ service.description|truncate(80) }}</p>
+                    
+                    <!-- Кнопка прижата к низу -->
+                    <div class="mt-auto">
+                        <button class="btn btn-dark w-100 rounded-pill py-2 fw-bold">Подробнее</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <h3 class="text-muted">В этой категории пока нет услуг.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
